@@ -1,0 +1,15 @@
+ABUSEIPDB_API_KEY=your_key_here
+PORT=3000
+# Public address of the site, used for share cards, canonical link and sitemap
+SITE_URL=https://yourdomain.com
+# How many lookups each visitor gets per rolling 24 hours
+DAILY_LIMIT=3
+# Set to true when deployed behind a reverse proxy (Nginx, Cloudflare, Render...). Vercel is automatic.
+TRUST_PROXY=false
+
+# Needed on Vercel (files do not persist there). Create a free Upstash Redis database
+# (Vercel dashboard > Storage / Marketplace) and paste its REST URL and token.
+# Vercel names these KV_REST_API_URL and KV_REST_API_TOKEN, which also work.
+# Leave empty to use a local file instead (fine on a VPS, Render, Railway, Fly).
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
