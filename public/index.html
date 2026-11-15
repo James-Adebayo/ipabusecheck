@@ -59,7 +59,7 @@
     {
       "@type": "FAQPage",
       "mainEntity": [
-        { "@type": "Question", "name": "Why only {{LIMIT_PHRASE}} per day?", "acceptedAnswer": { "@type": "Answer", "text": "The reports come from a third-party database that limits how many checks this site can make. Limiting each visitor to {{LIMIT_PHRASE}} per day keeps the tool free and available for everyone." } },
+        { "@type": "Question", "name": "Why only 3 per day?", "acceptedAnswer": { "@type": "Answer", "text": "The reports come from a third-party database that limits how many checks this site can make. Limiting each visitor to 3 per day keeps the tool free and available for everyone." } },
         { "@type": "Question", "name": "Does a score of 0 mean the address is safe?", "acceptedAnswer": { "@type": "Answer", "text": "No. It means nobody has reported it recently. New attackers, and addresses that only target a few sites, can go unreported for a long time." } },
         { "@type": "Question", "name": "Why is a big company's address flagged?", "acceptedAnswer": { "@type": "Answer", "text": "Cloud and hosting providers rent addresses to thousands of customers, and one compromised customer can get a shared address reported. Look at the report dates and comments before blocking an entire provider." } },
         { "@type": "Question", "name": "What if the address is shared, like a VPN or office network?", "acceptedAnswer": { "@type": "Answer", "text": "Many people can sit behind one public address, so a report may describe just one of them. The score is less meaningful for these, so review the comments rather than relying on the number." } },
@@ -103,7 +103,7 @@
           <span class="w" style="--i:3" aria-hidden="true">for</span>
           <span class="w" style="--i:4" aria-hidden="true">abuse</span>
         </h1>
-        <p class="lede">See how often an address has been reported for spam, scanning, brute-force logins and other abuse over the last 90 days. Free to use, with {{LIMIT_PHRASE}} per visitor each day.</p>
+        <p class="lede">See how often an address has been reported for spam, scanning, brute-force logins and other abuse over the last 90 days. Free to use, with 3 per visitor each day.</p>
         <form id="form" autocomplete="off">
           <input type="text" id="ip" name="ip" placeholder="118.25.6.39" aria-label="IP address" required spellcheck="false">
           <button type="submit" id="go">Check IP</button>
@@ -228,8 +228,8 @@
       <h2>Questions</h2>
       <p class="intro">Short answers to the things people ask most.</p>
       <div class="faq">
-        <details><summary>Why only {{LIMIT_PHRASE}} per day?</summary>
-          <p>The reports come from a third-party database that limits how many checks this site can make. Limiting each visitor to {{LIMIT_PHRASE}} per day keeps the tool free and available for everyone.</p></details>
+        <details><summary>Why only 3 per day?</summary>
+          <p>The reports come from a third-party database that limits how many checks this site can make. Limiting each visitor to 3 per day keeps the tool free and available for everyone.</p></details>
         <details><summary>Does a score of 0 mean the address is safe?</summary>
           <p>No. It means nobody has reported it recently. New attackers, and addresses that only target a few sites, can go unreported for a long time.</p></details>
         <details><summary>Why is a big company's address flagged?</summary>
