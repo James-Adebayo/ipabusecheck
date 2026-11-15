@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.classList.add('js')</script>
+
+<title>IP Abuse Check: free IP reputation and abuse lookup</title>
+<meta name="description" content="Check any IPv4 or IPv6 address for abuse. See its abuse confidence score, owner, country and recent reports from the last 90 days. Free, no signup.">
+<meta name="keywords" content="ip abuse check, ip reputation checker, is this ip safe, abuseipdb lookup, check ip address for abuse, ip blacklist check, malicious ip checker, spam ip check, brute force ip, ssh attack ip, abuse confidence score, block ip address, fraud ip check, ip threat intelligence, ip isp country lookup">
+<meta name="author" content="IP Abuse Check">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#f5c400">
+<link rel="canonical" href="{{SITE_URL}}/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f5c400'/%3E%3Cpath d='M4 22L22 4M10 28L28 10' stroke='%231a1917' stroke-width='5'/%3E%3C/svg%3E">
+
+<!-- Open Graph: Facebook, WhatsApp, LinkedIn, Telegram, Slack, Discord -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="IP Abuse Check">
+<meta property="og:title" content="IP Abuse Check: is this IP reported for abuse?">
+<meta property="og:description" content="Free lookup against 90 days of community abuse reports. Get the abuse score, owner, country and recent reports for any IP address.">
+<meta property="og:url" content="{{SITE_URL}}/">
+<meta property="og:image" content="{{SITE_URL}}/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="IP Abuse Check: is this IP reported for abuse? A score dial reading 92 above a hazard-stripe border.">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="IP Abuse Check: is this IP reported for abuse?">
+<meta name="twitter:description" content="Free lookup against 90 days of community abuse reports. Get the abuse score, owner, country and recent reports for any IP address.">
+<meta name="twitter:image" content="{{SITE_URL}}/og-image.png">
+<meta name="twitter:image:alt" content="IP Abuse Check: is this IP reported for abuse? A score dial reading 92 above a hazard-stripe border.">
+
+<!-- Structured data for search engines and AI assistants -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "IP Abuse Check",
+      "url": "{{SITE_URL}}/",
+      "description": "A free tool that checks any IPv4 or IPv6 address against 90 days of community abuse reports and returns an abuse confidence score from 0 to 100, the owner, country and recent reports.",
+      "applicationCategory": "SecurityApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": [
+        "Abuse confidence score from 0 to 100",
+        "Country, ISP, usage type, domain and hostnames",
+        "Tor exit node and allowlist detection",
+        "Most recent abuse reports with categories",
+        "IPv4 and IPv6 support"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Why only one lookup per day?", "acceptedAnswer": { "@type": "Answer", "text": "The reports come from a third-party database that limits how many checks this site can make. One lookup per visitor per day keeps the tool free and available for everyone." } },
+        { "@type": "Question", "name": "Does a score of 0 mean the address is safe?", "acceptedAnswer": { "@type": "Answer", "text": "No. It means nobody has reported it recently. New attackers, and addresses that only target a few sites, can go unreported for a long time." } },
+        { "@type": "Question", "name": "Why is a big company's address flagged?", "acceptedAnswer": { "@type": "Answer", "text": "Cloud and hosting providers rent addresses to thousands of customers, and one compromised customer can get a shared address reported. Look at the report dates and comments before blocking an entire provider." } },
+        { "@type": "Question", "name": "What if the address is shared, like a VPN or office network?", "acceptedAnswer": { "@type": "Answer", "text": "Many people can sit behind one public address, so a report may describe just one of them. The score is less meaningful for these, so review the comments rather than relying on the number." } },
+        { "@type": "Question", "name": "What does allowlisted mean?", "acceptedAnswer": { "@type": "Answer", "text": "AbuseIPDB marks some well-known, trusted addresses as allowlisted. Their score is usually kept low even if a few reports come in." } },
+        { "@type": "Question", "name": "Is the address I search saved?", "acceptedAnswer": { "@type": "Answer", "text": "No. To enforce the daily limit, the site keeps your own IP address and the time of your last lookup for about 24 hours. The address you searched for is not stored." } },
+        { "@type": "Question", "name": "Why do I only see reports from the last 90 days?", "acceptedAnswer": { "@type": "Answer", "text": "Lookups cover the past 90 days, so older incidents drop out. An address that was abusive years ago but is quiet now will usually look clean." } }
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ebeae7;
+    --panel: #f8f7f4;
+    --ink: #1a1917;
+    --muted: #67645d;
+    --line: #d2cfc8;
+    --yel: #f5c400;
+    --ok: #2f8f4e;
+    --warn: #d98200;
+    --bad: #d92d20;
+    --hero-ink: #1a1917;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1917;
+      --panel: #262420;
+      --ink: #f1efe9;
+      --muted: #a09c93;
+      --line: #3a3731;
+      --ok: #4cc77a;
+      --warn: #f0a020;
+      --bad: #ff5a4a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.55; min-height: 100vh; overflow-x: hidden; }
+  a { color: inherit; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3, .brand, .verdict, .step-n, .score, .cat-name {
+    font-family: "Archivo", "Arial Black", system-ui, sans-serif; font-weight: 800; font-stretch: 112%;
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 3px solid var(--ink); }
+  .topbar .wrap { display: flex; align-items: center; gap: 24px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-size: 1.1rem; margin-right: auto; }
+  .logo { width: 24px; height: 24px; border-radius: 6px; background: repeating-linear-gradient(-45deg, var(--ink) 0 4px, var(--yel) 4px 8px); }
+  .topbar nav { display: flex; gap: 22px; }
+  .topbar nav a { text-decoration: none; color: var(--muted); font-size: 0.95rem; font-weight: 500; position: relative; }
+  .topbar nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 3px; background: var(--yel); transform: scaleX(0); transform-origin: left; transition: transform .25s; }
+  .topbar nav a:hover { color: var(--ink); }
+  .topbar nav a:hover::after { transform: scaleX(1); }
+
+  /* ---------- buttons ---------- */
+  button, .btn {
+    font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block;
+    padding: 14px 26px; color: var(--yel); background: #1a1917; border: 3px solid #1a1917; border-radius: 12px;
+    transition: transform .15s, background .15s, color .15s, box-shadow .15s;
+  }
+  button:hover:not(:disabled), .btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--bad); }
+  button:active:not(:disabled), .btn:active { transform: translate(0, 0); box-shadow: none; }
+  button.ghost, .btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+  button.ghost:hover:not(:disabled) { box-shadow: 4px 4px 0 var(--yel); }
+  .small { padding: 8px 16px; font-size: 0.92rem; border-width: 2px; border-radius: 10px; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  :is(input, button, a, summary):focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+  /* ---------- hero ---------- */
+  .hero { background: var(--yel); color: var(--hero-ink); padding: 56px 0 64px; overflow: hidden; }
+  .hero .wrap { display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center; }
+  h1 { font-size: clamp(2.5rem, 7vw, 4.4rem); line-height: 0.98; letter-spacing: -0.02em; margin: 0 0 18px; }
+  h1 .w { display: inline-block; animation: rise .75s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 80ms + 100ms); }
+  .lede { margin: 0 0 30px; max-width: 48ch; font-size: 1.1rem; font-weight: 500; animation: rise .75s .55s both; }
+  form { display: flex; gap: 12px; flex-wrap: wrap; animation: rise .75s .7s both; }
+  input[type="text"] {
+    flex: 1 1 240px; min-width: 0; font: inherit; font-size: 1.1rem; font-weight: 500; padding: 14px 16px;
+    color: #1a1917; background: #fff; border: 3px solid #1a1917; border-radius: 12px;
+  }
+  input::placeholder { color: #8d8a83; }
+  #notice { min-height: 1.5em; margin: 14px 0 0; font-size: 0.95rem; font-weight: 500; }
+  #notice.error { color: #9a160b; font-weight: 600; }
+
+  /* radar */
+  .radar { position: relative; width: min(100%, 330px); aspect-ratio: 1; justify-self: center; border-radius: 50%; border: 4px solid #1a1917;
+    background:
+      linear-gradient(#1a1917, #1a1917) center / 2px 100% no-repeat,
+      linear-gradient(#1a1917, #1a1917) center / 100% 2px no-repeat,
+      repeating-radial-gradient(circle, transparent 0 40px, rgba(26,25,23,.35) 40px 42px);
+    animation: pop .9s .3s cubic-bezier(.2,.8,.2,1) both; }
+  .radar::before { content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, rgba(26,25,23,0) 0 250deg, rgba(26,25,23,.5) 360deg); animation: spin 4s linear infinite; }
+  .blip { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--bad); border: 2px solid #1a1917; }
+  .blip::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid var(--bad); animation: ping 2.4s ease-out infinite; animation-delay: var(--d); }
+  body.scanning .radar::before { animation-duration: .9s; }
+  body.scanning .blip::after { animation-duration: 0.9s; }
+
+  /* hazard band + ticker */
+  .hazard { height: 22px; background-color: var(--yel);
+    background-image: linear-gradient(45deg, #1a1917 25%, transparent 25%, transparent 50%, #1a1917 50%, #1a1917 75%, transparent 75%);
+    background-size: 44px 44px; animation: stripes 1.6s linear infinite; }
+  .ticker { background: #1a1917; color: var(--yel); overflow: hidden; white-space: nowrap; }
+  .track { display: inline-flex; animation: ticker 38s linear infinite; }
+  .ticker:hover .track { animation-play-state: paused; }
+  .track span { padding: 14px 0; font-weight: 600; }
+  .track span::after { content: ""; display: inline-block; width: 8px; height: 8px; margin: 0 28px; background: var(--bad); transform: rotate(45deg); }
+
+  /* ---------- result ---------- */
+  #result { margin-top: 48px; display: none; }
+  #result.show { display: block; animation: pop .6s cubic-bezier(.2,.8,.2,1) both; }
+  .summary { display: grid; grid-template-columns: 240px 1fr; gap: 32px; align-items: center; background: var(--panel); border: 3px solid var(--ink); border-radius: 18px; padding: 28px; box-shadow: 8px 8px 0 var(--yel); }
+  .dial { position: relative; width: 240px; }
+  .dial svg { display: block; width: 100%; height: auto; }
+  .dial .track-arc { stroke: var(--line); }
+  .dial .score { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font-size: 3rem; line-height: 1; }
+  .dial .score small { display: block; font: 500 0.8rem "Instrument Sans", sans-serif; color: var(--muted); margin-top: 4px; }
+  .verdict { font-size: 1.8rem; margin: 0 0 4px; }
+  .verdict-ip { color: var(--muted); margin: 0 0 18px; word-break: break-all; }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 20px; margin: 0; }
+  dt { color: var(--muted); }
+  dd { margin: 0; word-break: break-word; }
+  .reports-h { font-size: 1.4rem; margin: 36px 0 12px; }
+  .reports { list-style: none; margin: 0; padding: 0; border-top: 3px solid var(--ink); }
+  .reports li { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .meta { color: var(--muted); font-size: 0.88rem; margin-bottom: 6px; }
+  .comment { margin: 0 0 8px; white-space: pre-wrap; word-break: break-word; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-size: 0.8rem; font-weight: 600; padding: 2px 10px; background: var(--yel); color: #1a1917; border-radius: 99px; }
+  .empty { color: var(--muted); }
+
+  /* ---------- content sections ---------- */
+  .section { padding: 80px 0 0; }
+  .section h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); line-height: 1.05; letter-spacing: -0.015em; margin: 0 0 10px; }
+  .intro { color: var(--muted); max-width: 60ch; margin: 0 0 32px; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; list-style: none; margin: 0; padding: 0; }
+  .steps li { position: relative; padding-top: 18px; }
+  .steps li::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: var(--ink); transform-origin: left; }
+  .step-n { font-size: 3.2rem; line-height: 1; color: var(--yel); -webkit-text-stroke: 2px var(--ink); }
+  .steps h3 { margin: 10px 0 6px; font-size: 1.2rem; }
+  .steps p { margin: 0; color: var(--muted); }
+
+  .bands { display: grid; gap: 16px; }
+  .band { display: grid; grid-template-columns: 18px 1fr; gap: 20px; background: var(--panel); border: 3px solid var(--ink); border-radius: 14px; padding: 18px 22px 18px 0; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+  .band::before { content: ""; background: var(--c); }
+  .band:hover { transform: translateX(8px); box-shadow: -8px 0 0 var(--c); }
+  .band h3 { margin: 0 0 4px; font-size: 1.15rem; }
+  .band p { margin: 0; color: var(--muted); }
+  .band.ok { --c: var(--ok); } .band.warn { --c: var(--warn); } .band.bad { --c: var(--bad); }
+
+  .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px; margin: 0; }
+  .cats div { padding: 16px 0; border-bottom: 1px solid var(--line); transition: padding-left .2s, border-color .2s; }
+  .cats div:hover { padding-left: 12px; border-bottom-color: var(--ink); }
+  .cats dt { color: var(--ink); font-weight: 600; }
+  .cats dd { color: var(--muted); margin-top: 2px; }
+
+  .uses { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .uses > div { border: 3px solid var(--ink); border-radius: 14px; padding: 20px; background: var(--panel); transition: transform .2s, background .2s; }
+  .uses > div:hover { transform: translateY(-4px); background: var(--yel); color: #1a1917; }
+  .uses > div:hover p { color: #1a1917; }
+  .uses h3 { margin: 0 0 4px; font-size: 1.15rem; }
+  .uses p { margin: 0; color: var(--muted); }
+
+  .faq { border-top: 3px solid var(--ink); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { cursor: pointer; padding: 18px 0; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font-size: 1.5rem; line-height: 1; transition: transform .25s; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { margin: 0 0 18px; color: var(--muted); max-width: 64ch; animation: rise .35s both; }
+
+  .support { position: relative; overflow: hidden; display: flex; gap: 28px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--yel); color: #1a1917; border: 3px solid var(--ink); border-radius: 18px; padding: 48px 36px 36px; }
+  .support::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 14px; background-image: linear-gradient(45deg, #1a1917 25%, transparent 25%, transparent 50%, #1a1917 50%, #1a1917 75%, transparent 75%); background-size: 28px 28px; animation: stripes 1.6s linear infinite; }
+  .support h2 { margin: 0 0 8px; }
+  .support p { margin: 0; max-width: 50ch; font-weight: 500; }
+
+  footer { margin-top: 80px; border-top: 3px solid var(--ink); padding: 28px 0 48px; color: var(--muted); font-size: 0.92rem; }
+  footer .wrap { display: grid; gap: 8px; }
+  footer p { margin: 0; max-width: 70ch; }
+
+  /* ---------- support dialog ---------- */
+  dialog { border: 3px solid var(--ink); border-radius: 18px; background: var(--panel); color: var(--ink); padding: 0; width: min(480px, calc(100% - 32px)); overflow: hidden; }
+  dialog[open] { animation: pop .35s cubic-bezier(.2,.8,.2,1); }
+  dialog::backdrop { background: rgba(10, 9, 8, 0.65); }
+  .dlg-strip { height: 14px; background-color: var(--yel); background-image: linear-gradient(45deg, #1a1917 25%, transparent 25%, transparent 50%, #1a1917 50%, #1a1917 75%, transparent 75%); background-size: 28px 28px; animation: stripes 1.6s linear infinite; }
+  .dlg { padding: 26px 28px 28px; }
+  .dlg h2 { font-size: 1.6rem; margin: 0 0 8px; }
+  .dlg > p { color: var(--muted); margin: 0 0 20px; }
+  .method { border: 2px solid var(--ink); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+  .method h3 { margin: 0 0 8px; font-size: 1.05rem; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 4px 0; }
+  .row span:first-child { color: var(--muted); }
+  .row b { font-weight: 600; word-break: break-all; text-align: right; }
+  .dlg-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+  /* ---------- reveal on scroll (only when JS is on) ---------- */
+  .js .reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+  .js .reveal.in { opacity: 1; transform: none; }
+  .js .steps li::before { transform: scaleX(0); transition: transform .8s cubic-bezier(.2,.8,.2,1) .2s; }
+  .js .steps li.in::before { transform: scaleX(1); }
+
+  /* ---------- keyframes ---------- */
+  @keyframes rise { from { opacity: 0; transform: translateY(0.5em) skewY(3deg); } }
+  @keyframes pop { from { opacity: 0; transform: scale(.92) translateY(12px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes ping { 0% { transform: scale(.4); opacity: 1; } 80%, 100% { transform: scale(2.6); opacity: 0; } }
+  @keyframes stripes { to { background-position: 44px 0; } }
+  @keyframes ticker { to { transform: translateX(-50%); } }
+
+  @media (max-width: 820px) {
+    .hero .wrap { grid-template-columns: 1fr; }
+    .radar { width: 220px; order: -1; justify-self: start; }
+    .steps, .cats, .uses { grid-template-columns: 1fr; }
+    .topbar nav { display: none; }
+  }
+  @media (max-width: 640px) {
+    .summary { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    dl { text-align: left; width: 100%; }
+    .support { padding: 44px 24px 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+    .js .reveal { opacity: 1; transform: none; }
+    .js .steps li::before { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="logo" aria-hidden="true"></span>IP Abuse Check</a>
+    <nav aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#score">Reading the score</a>
+      <a href="#categories">Abuse types</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <button type="button" class="ghost small" data-open-support>Support the developer</button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <h1 aria-label="Check an IP for abuse">
+          <span class="w" style="--i:0" aria-hidden="true">Check</span>
+          <span class="w" style="--i:1" aria-hidden="true">an</span>
+          <span class="w" style="--i:2" aria-hidden="true">IP</span>
+          <span class="w" style="--i:3" aria-hidden="true">for</span>
+          <span class="w" style="--i:4" aria-hidden="true">abuse</span>
+        </h1>
+        <p class="lede">See how often an address has been reported for spam, scanning, brute-force logins and other abuse over the last 90 days. Free to use, with one lookup per visitor each day.</p>
+        <form id="form" autocomplete="off">
+          <input type="text" id="ip" name="ip" placeholder="118.25.6.39" aria-label="IP address" required spellcheck="false">
+          <button type="submit" id="go">Check IP</button>
+        </form>
+        <p id="notice" role="status" aria-live="polite"></p>
+      </div>
+      <div class="radar" aria-hidden="true">
+        <span class="blip" style="left:68%; top:28%; --d:0s"></span>
+        <span class="blip" style="left:30%; top:62%; --d:.8s"></span>
+        <span class="blip" style="left:72%; top:72%; --d:1.6s"></span>
+      </div>
+    </div>
+  </section>
+  <div class="hazard" aria-hidden="true"></div>
+  <div class="ticker" aria-label="Types of abuse reported">
+    <div class="track">
+      <span>Brute-force logins</span><span>SSH attacks</span><span>Port scans</span><span>Phishing</span><span>SQL injection</span>
+      <span>Web spam</span><span>Open proxies</span><span>DDoS attacks</span><span>Bad web bots</span><span>Exploited hosts</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section id="result" aria-live="polite">
+      <div class="summary">
+        <div class="dial">
+          <svg viewBox="0 0 220 120" aria-hidden="true">
+            <path class="track-arc" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke-width="16" stroke-linecap="round"/>
+            <path id="arc" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke-width="16" stroke-linecap="round"/>
+          </svg>
+          <div class="score"><span id="scoreNum">0</span><small>abuse confidence</small></div>
+        </div>
+        <div>
+          <p class="verdict" id="verdict"></p>
+          <p class="verdict-ip" id="verdictIp"></p>
+          <dl id="facts"></dl>
+        </div>
+      </div>
+      <h2 class="reports-h">Recent reports</h2>
+      <ul class="reports" id="reports"></ul>
+    </section>
+  </div>
+
+  <section class="section" id="how">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <p class="intro">A lookup takes a few seconds and needs no account.</p>
+      <ol class="steps">
+        <li>
+          <div class="step-n">1</div>
+          <h3>Enter an address</h3>
+          <p>Paste any public IPv4 or IPv6 address, for example one from your server logs or a suspicious email header. Your own address is filled in for you.</p>
+        </li>
+        <li>
+          <div class="step-n">2</div>
+          <h3>We check the reports</h3>
+          <p>The address is checked against AbuseIPDB, a shared database where network owners report attacks and spam.</p>
+        </li>
+        <li>
+          <div class="step-n">3</div>
+          <h3>Read the result</h3>
+          <p>You get a confidence score from 0 to 100, who owns the address, and the most recent reports with their categories.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="score">
+    <div class="wrap">
+      <h2>How to read the score</h2>
+      <p class="intro">The abuse confidence score reflects how many people reported the address, how recently, and how reliable those reporters are. Treat it as a strong hint rather than proof.</p>
+      <div class="bands">
+        <div class="band ok"><div>
+          <h3>0 to 24: looks clean</h3>
+          <p>Few or no reports. Normal traffic is expected, but an unreported address is not automatically safe, especially if it is new or only just started attacking.</p>
+        </div></div>
+        <div class="band warn"><div>
+          <h3>25 to 74: suspicious</h3>
+          <p>Some reports exist. Read the comments and dates. Rate-limit or challenge the traffic (CAPTCHA, extra verification) instead of blocking it outright.</p>
+        </div></div>
+        <div class="band bad"><div>
+          <h3>75 to 100: likely abusive</h3>
+          <p>Many recent reports from several reporters. Blocking at your firewall, web server or tools like fail2ban is reasonable, and so is refusing signups or payments from it.</p>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="categories">
+    <div class="wrap">
+      <h2>Common types of abuse</h2>
+      <p class="intro">Each report is tagged with one or more categories. These are the ones you will see most.</p>
+      <dl class="cats">
+        <div><dt>Brute-force</dt><dd>Repeated login guesses against a service, usually with lists of common passwords.</dd></div>
+        <div><dt>SSH</dt><dd>Attacks aimed at SSH servers, such as login attempts for users like root or oracle.</dd></div>
+        <div><dt>Port scan</dt><dd>Probing many ports to find open services that can be attacked later.</dd></div>
+        <div><dt>Web app attack</dt><dd>Attempts to exploit websites, such as vulnerable plugins, admin pages or login forms.</dd></div>
+        <div><dt>SQL injection</dt><dd>Sending crafted input to a site in an attempt to read or change its database.</dd></div>
+        <div><dt>DDoS attack</dt><dd>Flooding a server with traffic to knock it offline.</dd></div>
+        <div><dt>Phishing</dt><dd>Fake pages or emails built to steal passwords and payment details.</dd></div>
+        <div><dt>Email and web spam</dt><dd>Unwanted messages and comments, often with links to scams or malware.</dd></div>
+        <div><dt>Open proxy</dt><dd>A server that forwards traffic for anyone, which attackers use to hide their real address.</dd></div>
+        <div><dt>Bad web bot</dt><dd>Automated crawlers that ignore rules and scrape or hammer a site.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" id="uses">
+    <div class="wrap">
+      <h2>When this helps</h2>
+      <p class="intro">Anywhere an unknown address touches something you run.</p>
+      <div class="uses">
+        <div><h3>Reviewing server logs</h3><p>Found repeated failed logins or odd requests? Check where they came from before deciding to block them.</p></div>
+        <div><h3>Spotting fraud</h3><p>Check the address behind a suspicious signup, order or payment before approving it.</p></div>
+        <div><h3>Investigating email</h3><p>Look up the sending address in a spam or phishing message to see if it has a history.</p></div>
+        <div><h3>Securing your site</h3><p>Decide which addresses to add to a firewall blocklist, and which only need rate limiting.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="wrap">
+      <h2>Questions</h2>
+      <p class="intro">Short answers to the things people ask most.</p>
+      <div class="faq">
+        <details><summary>Why only one lookup per day?</summary>
+          <p>The reports come from a third-party database that limits how many checks this site can make. One lookup per visitor per day keeps the tool free and available for everyone.</p></details>
+        <details><summary>Does a score of 0 mean the address is safe?</summary>
+          <p>No. It means nobody has reported it recently. New attackers, and addresses that only target a few sites, can go unreported for a long time.</p></details>
+        <details><summary>Why is a big company's address flagged?</summary>
+          <p>Cloud and hosting providers rent addresses to thousands of customers, and one compromised customer can get a shared address reported. Look at the report dates and comments before blocking an entire provider.</p></details>
+        <details><summary>What if the address is shared, like a VPN or office network?</summary>
+          <p>Many people can sit behind one public address, so a report may describe just one of them. The score is less meaningful for these, so review the comments rather than relying on the number.</p></details>
+        <details><summary>What does "allowlisted" mean?</summary>
+          <p>AbuseIPDB marks some well-known, trusted addresses as allowlisted. Their score is usually kept low even if a few reports come in.</p></details>
+        <details><summary>Is the address I search saved?</summary>
+          <p>No. To enforce the daily limit, the site keeps your own IP address and the time of your last lookup for about 24 hours. The address you searched for is not stored.</p></details>
+        <details><summary>Why do I only see reports from the last 90 days?</summary>
+          <p>Lookups cover the past 90 days, so older incidents drop out. An address that was abusive years ago but is quiet now will usually look clean.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="support">
+    <div class="wrap">
+      <div class="support">
+        <div>
+          <h2>Support the developer</h2>
+          <p>This tool is free and has no ads. If it saved you time or helped you block an attacker, a small contribution helps keep it running and improving.</p>
+        </div>
+        <button type="button" data-open-support>Support the developer</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Abuse data is provided by <a href="https://www.abuseipdb.com" target="_blank" rel="noopener">AbuseIPDB</a>. This site is not affiliated with them.</p>
+    <p>Scores and reports are community-submitted and can be wrong or out of date. Use them as one signal among several, not as proof that an address or its owner did something.</p>
+  </div>
+</footer>
+
+<dialog id="supportDialog" aria-labelledby="supportTitle">
+  <div class="dlg-strip" aria-hidden="true"></div>
+  <div class="dlg">
+    <h2 id="supportTitle">Support the developer</h2>
+    <p>Thanks for using the tool. Any amount helps, and you can close this and keep using the site either way.</p>
+    <div id="methods"></div>
+    <div class="dlg-actions"><button type="button" class="ghost small" id="closeSupport">Close</button></div>
+  </div>
+</dialog>
+
+<script>
+/* ======== EDIT THIS: your support details ========
+   Each method is a card in the popup. "rows" show a label and a value with a Copy button.
+   "link" shows a button that opens that URL (Paystack, Flutterwave, Buy Me a Coffee, etc.). */
+const SUPPORT = {
+  autoOpenAfterLookup: true, // show the popup once per browser session after a successful lookup
+  methods: [
+    {
+      title: 'Bank transfer',
+      rows: [
+        ['Bank', 'Your bank name'],
+        ['Account name', 'Your account name'],
+        ['Account number', '0000000000'],
+      ],
+    },
+    // { title: 'Pay online', link: 'https://paystack.com/pay/your-link', label: 'Open payment page' },
+  ],
+};
+/* ================================================= */
+
+const CATEGORIES = {
+  1: 'DNS compromise', 2: 'DNS poisoning', 3: 'Fraud orders', 4: 'DDoS attack', 5: 'FTP brute-force',
+  6: 'Ping of death', 7: 'Phishing', 8: 'Fraud VoIP', 9: 'Open proxy', 10: 'Web spam', 11: 'Email spam',
+  12: 'Blog spam', 13: 'VPN IP', 14: 'Port scan', 15: 'Hacking', 16: 'SQL injection', 17: 'Spoofing',
+  18: 'Brute-force', 19: 'Bad web bot', 20: 'Exploited host', 21: 'Web app attack', 22: 'SSH', 23: 'IoT targeted'
+};
+const ARC_LEN = Math.PI * 90;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const $ = (id) => document.getElementById(id);
+const form = $('form'), ipInput = $('ip'), goBtn = $('go'), notice = $('notice');
+
+// Build DOM with textContent only: report comments are written by strangers, never inject them as HTML.
+function h(tag, props = {}, ...kids) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) node[k] = v;
+  for (const kid of kids) node.append(kid);
+  return node;
+}
+
+function say(msg, isError = false) {
+  notice.textContent = msg;
+  notice.className = isError ? 'error' : '';
+}
+
+function lockUntil(iso) {
+  goBtn.disabled = true;
+  ipInput.disabled = true;
+  say('Your lookup for today is used. Next one opens ' + new Date(iso).toLocaleString() + '.');
+}
+
+const scoreColor = (n) => (n >= 75 ? 'var(--bad)' : n >= 25 ? 'var(--warn)' : 'var(--ok)');
+const scoreVerdict = (n) => (n >= 75 ? 'Likely abusive' : n >= 25 ? 'Suspicious' : 'Looks clean');
+
+function countUp(el, to) {
+  if (REDUCED || to === 0) { el.textContent = to; return; }
+  const start = performance.now(), dur = 1000;
+  (function tick(now) {
+    const t = Math.min((now - start) / dur, 1);
+    el.textContent = Math.round(to * (1 - Math.pow(1 - t, 3)));
+    if (t < 1) requestAnimationFrame(tick);
+  })(start);
+}
+
+function render(d) {
+  const score = d.abuseConfidenceScore;
+  const result = $('result');
+  result.classList.remove('show');
+  void result.offsetWidth; // restart the entrance animation
+  result.classList.add('show');
+
+  const arc = $('arc');
+  arc.style.stroke = scoreColor(score);
+  arc.style.transition = 'none';
+  arc.style.strokeDasharray = ARC_LEN;
+  arc.style.strokeDashoffset = ARC_LEN;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    arc.style.transition = REDUCED ? 'none' : 'stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1)';
+    arc.style.strokeDashoffset = ARC_LEN * (1 - score / 100);
+  }));
+  countUp($('scoreNum'), score);
+  $('verdict').textContent = scoreVerdict(score);
+  $('verdict').style.color = scoreColor(score);
+  $('verdictIp').textContent = d.ipAddress;
+
+  const rows = [
+    ['Country', d.countryName ? `${d.countryName} (${d.countryCode})` : d.countryCode || 'Unknown'],
+    ['ISP', d.isp || 'Unknown'],
+    ['Usage type', d.usageType || 'Unknown'],
+    ['Domain', d.domain || 'None'],
+    ['Hostnames', d.hostnames && d.hostnames.length ? d.hostnames.join(', ') : 'None'],
+    ['Tor exit node', d.isTor ? 'Yes' : 'No'],
+    ['Allowlisted', d.isWhitelisted ? 'Yes' : 'No'],
+    ['Total reports', `${d.totalReports} from ${d.numDistinctUsers} distinct reporters`],
+    ['Last reported', d.lastReportedAt ? new Date(d.lastReportedAt).toLocaleString() : 'Never'],
+  ];
+  const facts = $('facts');
+  facts.replaceChildren();
+  for (const [k, v] of rows) facts.append(h('dt', { textContent: k }), h('dd', { textContent: String(v) }));
+
+  const list = $('reports');
+  list.replaceChildren();
+  const reports = (d.reports || []).slice(0, 10);
+  if (!reports.length) list.append(h('li', { className: 'empty', textContent: 'No reports in the last 90 days.' }));
+  for (const r of reports) {
+    const tags = h('div', { className: 'tags' });
+    for (const c of r.categories || []) tags.append(h('span', { className: 'tag', textContent: CATEGORIES[c] || 'Category ' + c }));
+    const where = r.reporterCountryName ? ' from ' + r.reporterCountryName : '';
+    list.append(h('li', {},
+      h('div', { className: 'meta', textContent: new Date(r.reportedAt).toLocaleString() + where }),
+      r.comment ? h('p', { className: 'comment', textContent: r.comment }) : '',
+      tags
+    ));
+  }
+  result.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const ip = ipInput.value.trim();
+  if (!ip) return;
+  goBtn.disabled = true;
+  document.body.classList.add('scanning'); // radar speeds up while the lookup runs
+  say('Scanning…');
+  try {
+    const res = await fetch('/api/check?ip=' + encodeURIComponent(ip));
+    const body = await res.json();
+    if (!res.ok) {
+      if (res.status === 429 && body.resetsAt) return lockUntil(body.resetsAt);
+      goBtn.disabled = false;
+      return say(body.error || 'Something went wrong.', true);
+    }
+    render(body.data);
+    lockUntil(body.resetsAt);
+    maybeAutoOpenSupport();
+  } catch {
+    goBtn.disabled = false;
+    say('Could not reach the server. Try again.', true);
+  } finally {
+    document.body.classList.remove('scanning');
+  }
+});
+
+fetch('/api/status').then(r => r.json()).then(s => {
+  if (s.ip && !ipInput.value) ipInput.value = s.ip; // prefill with the visitor's own IP
+  if (!s.allowed) lockUntil(s.resetsAt);
+}).catch(() => {});
+
+/* ---------- ticker: duplicate the items so the loop is seamless ---------- */
+const track = document.querySelector('.track');
+track.append(...[...track.children].map((n) => n.cloneNode(true)));
+track.querySelectorAll('span').forEach((s, i, all) => { if (i >= all.length / 2) s.setAttribute('aria-hidden', 'true'); });
+
+/* ---------- reveal sections as they scroll into view ---------- */
+const revealTargets = document.querySelectorAll(
+  '.section .wrap > h2, .section .wrap > .intro, .steps li, .band, .cats div, .uses > div, .faq details, .support'
+);
+revealTargets.forEach((el) => {
+  el.classList.add('reveal');
+  const idx = [...el.parentElement.children].indexOf(el);
+  el.style.transitionDelay = Math.min(idx, 5) * 90 + 'ms';
+});
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    for (const en of entries) if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+  }, { threshold: 0.15 });
+  revealTargets.forEach((el) => io.observe(el));
+} else {
+  revealTargets.forEach((el) => el.classList.add('in'));
+}
+
+/* ---------- support dialog ---------- */
+const dialog = $('supportDialog');
+
+function buildMethods() {
+  const box = $('methods');
+  box.replaceChildren();
+  for (const m of SUPPORT.methods) {
+    const card = h('div', { className: 'method' }, h('h3', { textContent: m.title }));
+    for (const [label, value] of m.rows || []) {
+      const copy = h('button', { type: 'button', className: 'ghost small', textContent: 'Copy' });
+      copy.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(value);
+          copy.textContent = 'Copied';
+        } catch {
+          copy.textContent = 'Press and hold to copy';
+        }
+        setTimeout(() => (copy.textContent = 'Copy'), 1800);
+      });
+      card.append(h('div', { className: 'row' }, h('span', { textContent: label }), h('b', { textContent: value }), copy));
+    }
+    if (m.link) card.append(h('a', { className: 'btn small', href: m.link, target: '_blank', rel: 'noopener', textContent: m.label || 'Open' }));
+    box.append(card);
+  }
+}
+
+function openSupport() {
+  buildMethods();
+  if (!dialog.open) dialog.showModal();
+}
+
+document.querySelectorAll('[data-open-support]').forEach((b) => b.addEventListener('click', openSupport));
+$('closeSupport').addEventListener('click', () => dialog.close());
+dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); }); // click on backdrop
+
+function maybeAutoOpenSupport() {
+  if (!SUPPORT.autoOpenAfterLookup) return;
+  try {
+    if (sessionStorage.getItem('supportShown')) return;
+    sessionStorage.setItem('supportShown', '1');
+  } catch { /* storage blocked: still show once per page load */ }
+  setTimeout(openSupport, 3500);
+}
+</script>
+</body>
+</html>
