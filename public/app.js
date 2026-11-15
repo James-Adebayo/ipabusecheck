@@ -45,7 +45,13 @@ function say(msg, isError = false) {
 function lockUntil(iso) {
   goBtn.disabled = true;
   ipInput.disabled = true;
-  say('Your lookup for today is used. Next one opens ' + new Date(iso).toLocaleString() + '.');
+  say('You have used all of today\'s lookups. The next one opens ' + new Date(iso).toLocaleString() + '.');
+}
+
+function showRemaining(remaining, limit) {
+  goBtn.disabled = false;
+  ipInput.disabled = false;
+  say(remaining + ' of ' + limit + (limit === 1 ? ' lookup' : ' lookups') + ' left today.');
 }
 
 const scoreColor = (n) => (n >= 75 ? 'var(--bad)' : n >= 25 ? 'var(--warn)' : 'var(--ok)');
@@ -130,7 +136,13 @@ form.addEventListener('submit', async (e) => {
       return say(body.error || 'Something went wrong.', true);
     }
     render(body.data);
-    lockUntil(body.resetsAt);
+    if (body.remaining > 0) {
+      showRemaining(body.remaining, body.limit);
+      ipInput.focus({ preventScroll: true });
+      ipInput.select(); // ready for the next address
+    } else {
+      lockUntil(body.resetsAt);
+    }
     maybeAutoOpenSupport();
   } catch {
     goBtn.disabled = false;
@@ -142,7 +154,8 @@ form.addEventListener('submit', async (e) => {
 
 fetch('/api/status').then(r => r.json()).then(s => {
   if (s.ip && !ipInput.value) ipInput.value = s.ip; // prefill with the visitor's own IP
-  if (!s.allowed) lockUntil(s.resetsAt);
+  if (s.allowed) showRemaining(s.remaining, s.limit);
+  else lockUntil(s.resetsAt);
 }).catch(() => {});
 
 /* ---------- ticker: duplicate the items so the loop is seamless ---------- */
